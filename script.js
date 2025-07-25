@@ -312,3 +312,65 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+// Initialize popup functionality for all popups (footer buttons and crypto)
+document.addEventListener('DOMContentLoaded', () => {
+  // Get all popup elements
+  const popupButtons = document.querySelectorAll('.popup-btn, .crypto-link');
+  const popups = document.querySelectorAll('.popup');
+  const closeButtons = document.querySelectorAll('.close-btn');
+
+  // Show popup when button is clicked
+  popupButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+      // For crypto links, let the existing handler handle it
+      if (button.classList.contains('crypto-link')) {
+        return; // Let the crypto handler take over
+      }
+      
+      // For popup buttons
+      e.preventDefault();
+      const popupId = button.getAttribute('data-popup');
+      const popup = document.getElementById(`${popupId}-popup`);
+      
+      if (popup) {
+        popup.classList.add('show');
+        document.body.style.overflow = 'hidden'; // Prevent scrolling when popup is open
+      }
+    });
+  });
+
+  // Close popup when close button is clicked
+  closeButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const popup = button.closest('.popup');
+      if (popup) {
+        popup.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+    });
+  });
+
+  // Close popup when clicking outside the content
+  popups.forEach(popup => {
+    popup.addEventListener('click', (e) => {
+      if (e.target === popup) {
+        popup.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+    });
+  });
+
+  // Close popup with Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      popups.forEach(popup => {
+        if (popup.classList.contains('show')) {
+          popup.classList.remove('show');
+          document.body.style.overflow = '';
+        }
+      });
+    }
+  });
+});

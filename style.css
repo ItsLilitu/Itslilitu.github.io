@@ -666,3 +666,74 @@ hr {
 .crypto-link:hover {
   transform: scale(1.05);
 }
+
+/* Footer Buttons */
+.footer-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 25px 0;
+  flex-wrap: wrap;
+}
+
+.footer-buttons button {
+  background: var(--murrey);
+  color: var(--apricot);
+  border: 1px solid var(--russet);
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  font-size: 1em;
+  min-width: 180px;
+}
+
+.footer-buttons button:hover {
+  background: var(--russet);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Popup Text Styles */
+.popup-text {
+  color: var(--apricot);
+  line-height: 1.6;
+  margin: 15px 0;
+}
+
+.popup-text p {
+  margin-bottom: 10px;
+}
+
+.popup-text strong {
+  color: var(--russet);
+  font-weight: 600;
+}
+
+.popup h3 {
+  color: var(--russet);
+  margin-top: 0;
+  font-size: 1.5em;
+  border-bottom: 1px solid var(--russet);
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+/* Responsive adjustments for popups */
+@media (max-width: 600px) {
+  .popup-content {
+    width: 90%;
+    padding: 1.5rem;
+  }
+  
+  .footer-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .footer-buttons button {
+    width: 100%;
+    max-width: 250px;
+  }
+}
