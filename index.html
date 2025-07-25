@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ItsLilitu</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- JavaScript will be loaded from external file -->
+
+  <div class="container">
+    <div class="header-container">
+      <img src="Images/pfp.png" alt="Profile Picture" class="profile-pic">
+      <div class="header-text">
+        <h1>ItsLilitu</h1>
+        <div class="subtitle">Captionist & Holder of Keys</div>
+      </div>
+    </div>
+    <div class="angle-divider">
+      <div class="angle-line"></div>
+      <div class="angle-line"></div>
+    </div>
+
+    <h2>Links, Infos and Content</h2>
+
+    <div class="sections-container">
+      <div class="section main-section">
+        <h3>Empty your wallet here:</h3>
+      <div class="payment-icons">
+        <a href="https://www.amazon.de/dp/B07Q1JNC7R?th=1" class="payment-link" title="Amazon Wishlist" target="_blank" rel="noopener noreferrer">
+          <img src="Images/Amazon.png" alt="Amazon Wishlist" class="payment-icon">
+        </a>
+        <a href="throne.com/ItsLilitu" class="payment-link" title="Throne" target="_blank" rel="noopener noreferrer">
+          <img src="Images/Throne.png" alt="Throne" class="payment-icon">
+        </a>
+        <div class="payment-link crypto-link" data-crypto="bitcoin" title="Bitcoin">
+          <img src="Images/Bitcoin.png" alt="Bitcoin" class="payment-icon">
+        </div>
+        <div class="payment-link crypto-link" data-crypto="ethereum" title="Ethereum">
+          <img src="Images/euthereum.png" alt="Ethereum" class="payment-icon">
+        </div>
+        
+        <!-- Crypto Popup -->
+        <div id="crypto-popup" class="popup">
+          <div class="popup-content">
+            <span class="close-btn">&times;</span>
+            <h3 id="popup-crypto-name"></h3>
+            <div id="popup-crypto-address" class="crypto-address"></div>
+            <button class="copy-btn">Copy Address</button>
+          </div>
+        </div>
+        </div>
+      </div>
+
+      <div class="section quarter-section">
+        <!-- Content for the quarter-width section -->
+        <h3>Quick Links</h3>
+        <a href="https://ibb.co/album/wrsC51" class="link" target="_blank" rel="noopener noreferrer">Browse my Captions</a>
+        <a href="https://x.com/ItsLilitu" class="link" target="_blank" rel="noopener noreferrer">Main Twitter: Captions and Edits</a>
+        <a href="https://x.com/ItsLilitu2dfd" class="link" target="_blank" rel="noopener noreferrer">Twitter Alt: 2DFD (WIP)</a>
+        <a href="https://chaster.app/explore/68833da66274d31b8e6d7eaa" class="link" target="_blank" rel="noopener noreferrer">Join one of my Chaster locks</a>
+        <a href="twitterbot-rhnb.onrender.com/login" class="link" target="_blank" rel="noopener noreferrer">Give me access to your Twitter</a>
+      </div>
+    </div>
+
+    <div class="section content-section">
+      <div class="column">
+        <h3>Edits & Captions</h3>
+        <div class="slider-container">
+          <div class="slider" id="slider1">
+            <!-- Images will be inserted here by JavaScript -->
+          </div>
+          <button class="slider-nav prev">❮</button>
+          <button class="slider-nav next">❯</button>
+        </div>
+      </div>
+
+      <div class="column">
+        <h3>More Captions</h3>
+        <div class="slider-container">
+          <div class="slider" id="slider2">
+            <!-- Images will be inserted here by JavaScript -->
+          </div>
+          <button class="slider-nav prev">❮</button>
+          <button class="slider-nav next">❯</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-buttons">
+      <button>Prices</button>
+      <button>Accomplishments</button>
+      <button>Exposure Support</button>
+      <button>More Info</button>
+    </div>
+
+    <div class="section">
+      <h3>Wheels</h3>
+      Tasks, Drains, Chastity - Coming soon
+    </div>
+
+  </div>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
