@@ -374,3 +374,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+// Delegated click handling for footer popup buttons
+// This ensures functionality even if buttons are added later
+
+document.addEventListener('click', (event) => {
+  const target = event.target.closest('.popup-btn');
+  if (!target) return; // Click was not on a popup button
+
+  event.preventDefault();
+  const popupId = target.getAttribute('data-popup');
+  if (!popupId) return;
+
+  const popup = document.getElementById(`${popupId}-popup`);
+  if (popup) {
+    popup.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+});
