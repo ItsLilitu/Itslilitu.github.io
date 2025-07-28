@@ -22,34 +22,49 @@
       <div class="angle-line"></div>
     </div>
 
+    <div id="slider-container" class="section content-section">
+      <div id="first" class="column">
+        <h3>Edits & Captions</h3>
+        <div class="slider-container">
+          <div class="slider" id="slider1">
+            <!-- Images will be inserted here by JavaScript -->
+          </div>
+          <button class="slider-nav prev">❮</button>
+          <button class="slider-nav next">❯</button>
+        </div>
+      </div>
+
+      <div id="second" class="column">
+        <h3>More Captions</h3>
+        <div class="slider-container">
+          <div class="slider" id="slider2">
+            <!-- Images will be inserted here by JavaScript -->
+          </div>
+          <button class="slider-nav prev">❮</button>
+          <button class="slider-nav next">❯</button>
+        </div>
+      </div>
+      <div id="clear"></div>
+    </div>
+    
     <h2>Links, Infos and Content</h2>
 
     <div class="sections-container">
       <div class="section main-section">
         <h3>Empty your wallet here:</h3>
-      <div class="payment-icons">
-        <a href="https://www.amazon.de/dp/B07Q1JNC7R?th=1" class="payment-link" title="Amazon Wishlist" target="_blank" rel="noopener noreferrer">
-          <img src="Images/Amazon.png" alt="Amazon Wishlist" class="payment-icon">
-        </a>
-        <a href="https://throne.com/ItsLilitu" class="payment-link" title="Throne" target="_blank" rel="noopener noreferrer">
-          <img src="Images/Throne.png" alt="Throne" class="payment-icon">
-        </a>
-        <div class="payment-link crypto-link" data-crypto="bitcoin" title="Bitcoin">
-          <img src="Images/Bitcoin.png" alt="Bitcoin" class="payment-icon">
-        </div>
-        <div class="payment-link crypto-link" data-crypto="ethereum" title="Ethereum">
-          <img src="Images/euthereum.png" alt="Ethereum" class="payment-icon">
-        </div>
-        
-        <!-- Crypto Popup -->
-        <div id="crypto-popup" class="popup">
-          <div class="popup-content">
-            <span class="close-btn">&times;</span>
-            <h3 id="popup-crypto-name"></h3>
-            <div id="popup-crypto-address" class="crypto-address"></div>
-            <button class="copy-btn">Copy Address</button>
+        <div class="payment-icons">
+          <a href="https://www.amazon.de/dp/B07Q1JNC7R?th=1" class="payment-link" title="Amazon Wishlist" target="_blank" rel="noopener noreferrer">
+            <img src="Images/Amazon.png" alt="Amazon Wishlist" class="payment-icon">
+          </a>
+          <a href="https://throne.com/ItsLilitu" class="payment-link" title="Throne" target="_blank" rel="noopener noreferrer">
+            <img src="Images/Throne.png" alt="Throne" class="payment-icon">
+          </a>
+          <div class="payment-link crypto-link" data-crypto="bitcoin" title="Bitcoin">
+            <img src="Images/Bitcoin.png" alt="Bitcoin" class="payment-icon">
           </div>
-        </div>
+          <div class="payment-link crypto-link" data-crypto="ethereum" title="Ethereum">
+            <img src="Images/euthereum.png" alt="Ethereum" class="payment-icon">
+          </div>
         </div>
       </div>
 
@@ -65,81 +80,14 @@
       </div>
     </div>
 
-    <div class="section content-section">
-      <div class="column">
-        <h3>Edits & Captions</h3>
-        <div class="slider-container">
-          <div class="slider" id="slider1">
-            <!-- Images will be inserted here by JavaScript -->
-          </div>
-          <button class="slider-nav prev">❮</button>
-          <button class="slider-nav next">❯</button>
-        </div>
-      </div>
-
-      <div class="column">
-        <h3>More Captions</h3>
-        <div class="slider-container">
-          <div class="slider" id="slider2">
-            <!-- Images will be inserted here by JavaScript -->
-          </div>
-          <button class="slider-nav prev">❮</button>
-          <button class="slider-nav next">❯</button>
-        </div>
-      </div>
-    </div>
-
     <div class="footer-buttons">
       <button class="popup-btn" data-popup="about-me">About Me</button>
       <button class="popup-btn" data-popup="prices">Prices</button>
-      <button class="popup-btn" data-popup="profile-pic">Sub Profile Picture & Banner</button>
+      <button class="popup-btn" data-popup="profile-pic">PFP & Banner</button>
       <button class="popup-btn" data-popup="contact">BetaBrowser</button>
     </div>
 
-    <!-- Popup Overlays -->
-    <div id="about-me-popup" class="popup">
-      <div class="popup-content">
-        <span class="close-btn">&times;</span>
-        <h3>About Me (WIP)</h3>
-        <div class="popup-text">
-          <p>Hi hi~ I'm Lilitu, a gifted captionist and keyholder! More Infos coming soon.</p>
-        </div>
-      </div>
-    </div>
 
-    <div id="prices-popup" class="popup">
-      <div class="popup-content">
-        <span class="close-btn">&times;</span>
-        <h3>Prices & Services (WIP)</h3>
-        <div class="popup-text">
-          <p><strong>Custom Captions:</strong> 10€ each</p>
-          <p><strong>Blacked Edit, Simple censor:</strong> 3€ each</p>
-          <p><strong>Keyholding:</strong> starting at 10€ per week</p>
-          <p><strong>Custom Content:</strong> DM me</p>
-          <p>Payment methods: Amazon, Throne, Crypto</p>
-        </div>
-      </div>
-    </div>
-
-    <div id="profile-pic-popup" class="popup">
-      <div class="popup-content">
-        <span class="close-btn">&times;</span>
-        <h3>Sub Profile Picture & Banner</h3>
-        <div class="popup-text">
-          <p>Want to show everyone who you belong to? Get a custom sub profile picture and banner featuring my branding.</p>
-        </div>
-      </div>
-    </div>
-
-    <div id="contact-popup" class="popup">
-      <div class="popup-content">
-        <span class="close-btn">&times;</span>
-        <h3>Contact Me</h3>
-        <div class="popup-text">
-          <p>WIP, I'm working on something huge there</p>
-        </div>
-      </div>
-    </div>
 
     <div class="section">
       <h3>Wheel Spins</h3>
@@ -147,6 +95,62 @@
     </div>
 
   </div>
+
+  <!-- Popup Overlays -->
+  <div id="about-me-popup" class="popup">
+    <div class="popup-content">
+      <span class="close-btn">&times;</span>
+      <h3>About Me (WIP)</h3>
+      <div class="popup-text">
+        <p>Hi hi~ I'm Lilitu, a gifted captionist and keyholder! More Infos coming soon.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="prices-popup" class="popup">
+    <div class="popup-content">
+      <span class="close-btn">&times;</span>
+      <h3>Prices & Services (WIP)</h3>
+      <div class="popup-text">
+        <p><strong>Custom Captions:</strong> 10€ each</p>
+        <p><strong>Blacked Edit, Simple censor:</strong> 3€ each</p>
+        <p><strong>Keyholding:</strong> starting at 10€ per week</p>
+        <p><strong>Custom Content:</strong> DM me</p>
+        <p>Payment methods: Amazon, Throne, Crypto</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="profile-pic-popup" class="popup">
+    <div class="popup-content">
+      <span class="close-btn">&times;</span>
+      <h3>Sub Profile Picture & Banner</h3>
+      <div class="popup-text">
+        <p>Want to show everyone who you belong to? DM me to get a custom sub profile picture and banner featuring my branding.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="contact-popup" class="popup">
+    <div class="popup-content">
+      <span class="close-btn">&times;</span>
+      <h3>Beta Browser</h3>
+      <div class="popup-text">
+        <p>WIP, I'm working on something huge there</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crypto Popup -->
+  <div id="crypto-popup" class="popup">
+    <div class="popup-content">
+      <span class="close-btn">&times;</span>
+      <h3 id="popup-crypto-name"></h3>
+      <div id="popup-crypto-address" class="crypto-address"></div>
+      <button class="copy-btn">Copy Address</button>
+    </div>
+  </div>
+
   <script type="module" src="script.js"></script>
 </body>
 </html>

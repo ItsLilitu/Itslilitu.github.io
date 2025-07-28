@@ -149,9 +149,11 @@ body {
   grid-template-columns: repeat(2, 1fr);
   gap: 15px;
   margin-top: 15px;
-  max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
 }
 
 .payment-link {
@@ -276,17 +278,36 @@ hr {
   display: flex;
   gap: 20px;
   width: 100%;
+  align-items: stretch;
+  margin: 25px 0;
 }
 
-.main-section {
-  flex: 3; /* Takes 3/4 of the space */
+.main-section, .quarter-section {
+  flex: 1 1 50%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
 }
 
-.quarter-section {
-  flex: 1; /* Takes 1/4 of the space */
-  min-width: 0; /* Prevents flex items from overflowing */
+/* Section styles */
+.section {
+  width: 100%;
+  margin: 0;
+  padding: 20px;
+  background: rgba(30, 20, 18, 0.5);
+  border: 1px solid var(--russet);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
+/* Links in quarter section */
 .quarter-section .link {
   display: block;
   margin: 10px 0;
@@ -299,21 +320,6 @@ hr {
 .quarter-section .link:hover {
   background: rgba(255, 255, 255, 0.1);
   transform: translateX(5px);
-}
-
-/* Sections */
-.section {
-  margin: 25px 0;
-  padding: 20px;
-  background: rgba(30, 20, 18, 0.5);
-  border: 1px solid var(--russet);
-  border-radius: 12px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.section:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(151, 78, 42, 0.2);
 }
 
 /* Wheel Buttons */
@@ -365,17 +371,28 @@ hr {
 }
 
 /* Content Layout */
-.content-section {
-  display: flex;
-  gap: 20px;
-  justify-content: space-between;
-  flex-wrap: wrap;
+#slider-container {
+  width: 100%;
   margin: 25px 0;
+  overflow: hidden; /* Clear the float */
 }
 
-.column {
-  flex: 1;
-  min-width: 40%;
+#first {
+  width: 50%;
+  float: left;
+  box-sizing: border-box;
+  padding-right: 10px; /* Add some spacing between columns */
+}
+
+#second {
+  width: 50%;
+  float: left;
+  box-sizing: border-box;
+  padding-left: 10px; /* Add some spacing between columns */
+}
+
+#clear {
+  clear: both;
 }
 
 .column h3 {
@@ -447,14 +464,12 @@ hr {
 .slider-container {
   position: relative;
   width: 100%;
-  max-width: 600px; /* Increased max-width for better quality */
-  margin: 0 auto;
+  margin: 0;
   overflow: hidden;
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   aspect-ratio: 1 / 1; /* Makes container square */
   background: rgba(0, 0, 0, 0.1);
-  /* Ensure proper image scaling */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -487,25 +502,47 @@ hr {
   backface-visibility: hidden;
 }
 
+.slide {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  display: none;
+}
+
 .slide.active {
-  position: relative;
+  width: 30%;
   opacity: 1;
-  transform: scale(1);
-  z-index: 1;
+  display: block;
+  position: relative;
+}
+
+.slide-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--text-color);
+  font-size: 1.2rem;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 10px 20px;
+  border-radius: 20px;
+  backdrop-filter: blur(5px);
 }
 
 .slide img {
   width: 100%;
   height: 100%;
-  object-fit: contain; /* Changed from 'cover' to 'contain' to prevent upscaling */
-  object-position: center;
+  object-fit: contain;
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.05);
-  /* Remove all image-rendering properties to allow browser to use its best algorithm */
+  /* Smooth scaling and rendering */
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  transform: translateZ(0);
-  /* Ensure smooth scaling */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* Prevent image distortion */
@@ -514,6 +551,9 @@ hr {
   /* Center the image */
   margin: 0 auto;
   display: block;
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  will-change: transform, opacity;
 }
 
 .slider-nav {
@@ -544,22 +584,51 @@ hr {
 }
 
 /* Responsive adjustments */
+/* Default styles (for larger screens) */
+.content-section {
+  display: block;
+  gap: 20px;
+  justify-content: space-between;
+  margin: 25px 0;
+  width: 100%;
+}
+
+.column {
+  min-width: 0;
+  display: block;
+  width: 50%;
+}
+
+.slider-container {
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  aspect-ratio: 1 / 1;
+  background: rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile styles */
 @media (max-width: 768px) {
-  .slider-container {
-    max-width: 100%;
-    height: auto;
-    aspect-ratio: 1 / 1;
-  }
-  
   .content-section {
     flex-direction: column;
     align-items: center;
+    gap: 30px;
   }
   
   .column {
     width: 100%;
+    max-width: 400px;
+    margin-bottom: 0;
+  }
+  
+  .slider-container {
     max-width: 100%;
-    margin-bottom: 30px;
+    height: auto;
   }
   
   .slider {
@@ -572,42 +641,36 @@ hr {
   }
 }
 
-/* Crypto Popup Styles */
+/* Simple Popup Styles */
 .popup {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  display: none; /* Hidden by default */
 }
 
 .popup.show {
-  display: flex;
-  opacity: 1;
+  display: block; /* Show when toggled */
 }
 
 .popup-content {
-  background: var(--dark-color, #1E1412);
-  padding: 2rem;
-  border-radius: 8px;
-  max-width: 90%;
-  width: 400px;
-  position: relative;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(13, 15, 15, 0.95);
   border: 1px solid var(--russet);
-  transform: translateY(-20px);
-  transition: transform 0.3s ease;
+  border-radius: 15px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  z-index: 2000;
 }
 
-.popup.show .popup-content {
-  transform: translateY(0);
+/* Prevent horizontal scrollbar */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .close-btn {

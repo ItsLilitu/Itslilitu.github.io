@@ -149,48 +149,79 @@ import { slider1Images, slider2Images } from './slider-data.js';
 
 // Function to get high quality image URL from ImgBB
 function getHighQualityUrl(url) {
-  // For ImgBB, we can force the original image by adding a cache-busting parameter
-  // and ensuring we get the PNG version if available
-  if (url.includes('i.ibb.co')) {
-    // Remove any existing query parameters
-    const cleanUrl = url.split('?')[0];
-    // Add a cache-busting parameter to ensure we get a fresh copy
-    return `${cleanUrl}?${Date.now()}`;
+  if (!url) return '';
+  
+  // Remove any query parameters
+  const cleanUrl = url.split('?')[0];
+  
+  // If it's already an ImgBB URL, return the clean URL
+  if (cleanUrl.includes('i.ibb.co')) {
+    return cleanUrl;
   }
-  return url;
+  
+  // For non-ImgBB URLs, return the clean URL
+  return cleanUrl;
 }
 
-// Function to preload images
-function preloadImages(images) {
-  images.forEach(img => {
-    const image = new Image();
-    // Use the high quality URL for preloading
-    image.src = getHighQualityUrl(img.url);
+// Function to preload a single image and return a promise
+function preloadImage(url) {
+  return new Promise((resolve) => {
+    const cleanUrl = getHighQualityUrl(url);
+    const img = new Image();
+    
+    img.onload = () => resolve(img);
+    img.onerror = () => {
+      console.log(`Trying fallback for: ${cleanUrl}`);
+      // If high quality fails, try the original URL (if different)
+      if (url !== cleanUrl) {
+        const fallbackImg = new Image();
+        fallbackImg.onload = () => resolve(fallbackImg);
+        fallbackImg.onerror = () => {
+          console.error(`Failed to load fallback image: ${url}`);
+          resolve(null); // Continue slideshow even if image fails
+        };
+        fallbackImg.src = url;
+      } else {
+        console.error(`Failed to load image: ${cleanUrl}`);
+        resolve(null); // Continue slideshow even if image fails
+      }
+    };
+    
+    // Start loading the image
+    console.log(`Loading image: ${cleanUrl}`);
+    img.src = cleanUrl;
   });
 }
 
 // Function to populate a slider with images
-function populateSlider(slider, images) {
-  if (!slider || !images) return;
+async function populateSlider(slider, images, initialSlide = 0) {
+  if (!slider || !images || !images.length) return;
   
-  // Preload all images for this slider
-  preloadImages(images);
-  
-  // Create slides with high quality images
+  // Create empty slides with loading placeholders
   slider.innerHTML = images.map((img, idx) => `
-    <div class="slide ${idx === 0 ? 'active' : ''}">
-      <img 
-        src="${getHighQualityUrl(img.url)}" 
-        data-src="${getHighQualityUrl(img.url)}" 
-        loading="lazy" 
-        alt="${img.alt}"
-        onerror="this.onerror=null; this.src='${img.url}'; this.dataset.fallbackUsed='true'"
-      >
+    <div class="slide ${idx === initialSlide ? 'active' : ''}" data-loaded="${idx === initialSlide ? 'true' : 'false'}" style="display:${idx === initialSlide ? 'block' : 'none'};">
+      ${idx === initialSlide ? 
+        `<img 
+          src="${getHighQualityUrl(img.url)}" 
+          data-src="${getHighQualityUrl(img.url)}" 
+          alt="${img.alt}" 
+          loading="eager"
+          onerror="this.onerror=null; this.src='${img.url}'; this.dataset.fallbackUsed='true'"
+        >` : 
+        '<div class="slide-loading">Loading...</div>'
+      }
     </div>
   `).join('');
+  
+  // Preload the next image in the background
+  if (images.length > 1) {
+    preloadImage(images[1].url);
+  }
+  
+  return slider.querySelectorAll('.slide');
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   // Initialize sliders with their respective data
   const slider1 = document.getElementById('slider1');
   const slider2 = document.getElementById('slider2');
@@ -201,9 +232,9 @@ document.addEventListener('DOMContentLoaded', () => {
     slider2: slider2Images
   };
   
-  // Populate sliders with images
-  populateSlider(slider1, sliderData.slider1);
-  populateSlider(slider2, sliderData.slider2);
+  // Populate sliders with images and get slide elements
+  const slider1Slides = await populateSlider(slider1, sliderData.slider1, Math.floor(Math.random() * sliderData.slider1.length));
+  const slider2Slides = await populateSlider(slider2, sliderData.slider2, Math.floor(Math.random() * sliderData.slider2.length));
   
   // Initialize all sliders
   document.querySelectorAll('.slider-container').forEach((container, index) => {
@@ -211,12 +242,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const slides = container.querySelectorAll('.slide');
     const prevBtn = container.querySelector('.prev');
     const nextBtn = container.querySelector('.next');
-    let currentSlide = 0;
+    // Choose a random starting slide for this slider
+    let currentSlide = Math.floor(Math.random() * slides.length);
     let slideInterval;
-    
-    // Show first slide
+
+    // Ensure the randomly chosen slide is loaded and marked as active
+    const currentSlideEl = slides[currentSlide];
+    if (currentSlideEl.getAttribute('data-loaded') === 'false') {
+      const imgData = sliderData[`slider${index + 1}`][currentSlide];
+      currentSlideEl.innerHTML = `
+        <img 
+          src="${getHighQualityUrl(imgData.url)}" 
+          data-src="${getHighQualityUrl(imgData.url)}" 
+          alt="${imgData.alt}" 
+          loading="eager"
+          onerror="this.onerror=null; this.src='${imgData.url}'; this.dataset.fallbackUsed='true'"
+        >`;
+      currentSlideEl.setAttribute('data-loaded', 'true');
+    }
+
+    // Update slide visibility and active classes
+    slides.forEach((slide, idx) => {
+      slide.style.display = idx === currentSlide ? 'block' : 'none';
+      slide.classList.toggle('active', idx === currentSlide);
+    });
+
+    // Display the randomly chosen slide
     showSlide(currentSlide);
     
+    // Preload the next slide for smoother transition
+    const preloadIndex = (currentSlide + 1) % slides.length;
+    if (slides[preloadIndex].getAttribute('data-loaded') === 'false') {
+      preloadImage(sliderData[`slider${index + 1}`][preloadIndex].url);
+    }
+
     // Start auto-sliding
     startSlider();
     
@@ -226,17 +285,17 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Navigation buttons
     if (nextBtn) {
-      nextBtn.addEventListener('click', () => {
+      nextBtn.addEventListener('click', async () => {
         pauseSlider();
-        nextSlide();
+        await nextSlide();
         startSlider();
       });
     }
     
     if (prevBtn) {
-      prevBtn.addEventListener('click', () => {
+      prevBtn.addEventListener('click', async () => {
         pauseSlider();
-        prevSlide();
+        await prevSlide();
         startSlider();
       });
     }
@@ -245,53 +304,157 @@ document.addEventListener('DOMContentLoaded', () => {
     let touchStartX = 0;
     let touchEndX = 0;
     
-    container.addEventListener('touchstart', (e) => {
+    slider.addEventListener('touchstart', (e) => {
       touchStartX = e.changedTouches[0].screenX;
       pauseSlider();
     }, false);
     
-    container.addEventListener('touchend', (e) => {
+    slider.addEventListener('touchend', async (e) => {
       touchEndX = e.changedTouches[0].screenX;
-      handleSwipe();
-      startSlider();
-    }, false);
-    
-    function handleSwipe() {
       const swipeThreshold = 50; // Minimum distance to trigger slide change
       
       if (touchEndX < touchStartX - swipeThreshold) {
-        nextSlide(); // Swipe left
+        await nextSlide(); // Swipe left
       }
       
       if (touchEndX > touchStartX + swipeThreshold) {
-        prevSlide(); // Swipe right
+        await prevSlide(); // Swipe right
       }
-    }
+      
+      startSlider();
+    }, false);
     
     function showSlide(index) {
+      console.log(`Showing slide ${index}`);
+      
+      // Get current active slide
+      const currentActive = slider.querySelector('.slide.active');
+      const nextSlide = slides[index];
+      
+      // If already showing this slide, do nothing
+      if (currentActive === nextSlide) {
+        console.log('Already showing this slide');
+        return;
+      }
+      
       // Add transition class for smooth animation
       slider.classList.add('sliding');
       
-      // Hide all slides
-      slides.forEach(slide => slide.classList.remove('active'));
+      // Fade out current slide
+      if (currentActive) {
+        currentActive.classList.remove('active');
+        console.log(`Hiding slide ${Array.from(slides).indexOf(currentActive)}`);
+      }
       
-      // Show current slide
-      slides[index].classList.add('active');
+      // Fade in next slide
+      nextSlide.style.display = 'block';
+      // Force reflow to ensure display:block is applied before adding active class
+      void nextSlide.offsetHeight;
+      nextSlide.classList.add('active');
+      console.log(`Showing slide ${index}`, nextSlide);
       
-      // Remove transition class after animation
-      setTimeout(() => {
+      // Clean up after animation
+      const onTransitionEnd = () => {
+        // Hide all non-active slides
+        slides.forEach(slide => {
+          if (!slide.classList.contains('active')) {
+            slide.style.display = 'none';
+          }
+        });
         slider.classList.remove('sliding');
-      }, 800);
+        slider.removeEventListener('transitionend', onTransitionEnd);
+      };
+      
+      // Use transitionend event to clean up
+      nextSlide.addEventListener('transitionend', onTransitionEnd, { once: true });
+      
+      // Fallback in case transitionend doesn't fire
+      setTimeout(() => {
+        if (slider.classList.contains('sliding')) {
+          onTransitionEnd();
+        }
+      }, 1000);
     }
     
-    function nextSlide() {
-      currentSlide = (currentSlide + 1) % slides.length;
+    async function nextSlide() {
+      console.log('nextSlide called');
+      const nextSlideIndex = (currentSlide + 1) % slides.length;
+      console.log(`Current slide: ${currentSlide}, Next slide: ${nextSlideIndex}`);
+      const nextSlide = slides[nextSlideIndex];
+      
+      // Only proceed if not currently in a transition
+      if (slider.classList.contains('sliding')) {
+        console.log('Currently sliding, ignoring nextSlide');
+        return;
+      }
+      
+      // If next slide isn't loaded yet, load it first
+      if (nextSlide.getAttribute('data-loaded') === 'false') {
+        nextSlide.innerHTML = '<div class="slide-loading">Loading...</div>';
+        try {
+          const img = await preloadImage(sliderData[`slider${index + 1}`][nextSlideIndex].url);
+          if (img) {
+            nextSlide.innerHTML = `
+              <img 
+                src="${img.src}" 
+                data-src="${img.src}" 
+                alt="${sliderData[`slider${index + 1}`][nextSlideIndex].alt}" 
+                loading="lazy"
+              >`;
+          }
+          nextSlide.setAttribute('data-loaded', 'true');
+        } catch (error) {
+          console.error('Error loading slide:', error);
+          return; // Don't proceed if image fails to load
+        }
+      }
+      
+      currentSlide = nextSlideIndex;
+      showSlide(currentSlide);
+      
+      // Preload the slide after next
+      const nextNextIndex = (nextSlideIndex + 1) % slides.length;
+      if (slides[nextNextIndex].getAttribute('data-loaded') === 'false') {
+        preloadImage(sliderData[`slider${index + 1}`][nextNextIndex].url);
+      }
+    }
+    
+    async function prevSlide() {
+      const prevSlideIndex = (currentSlide - 1 + slides.length) % slides.length;
+      const prevSlide = slides[prevSlideIndex];
+      
+      // Only proceed if not currently in a transition
+      if (slider.classList.contains('sliding')) return;
+      
+      // If previous slide isn't loaded yet, load it first
+      if (prevSlide.getAttribute('data-loaded') === 'false') {
+        prevSlide.innerHTML = '<div class="slide-loading">Loading...</div>';
+        try {
+          const img = await preloadImage(sliderData[`slider${index + 1}`][prevSlideIndex].url);
+          if (img) {
+            prevSlide.innerHTML = `
+              <img 
+                src="${img.src}" 
+                data-src="${img.src}" 
+                alt="${sliderData[`slider${index + 1}`][prevSlideIndex].alt}" 
+                loading="lazy"
+              >`;
+          }
+          prevSlide.setAttribute('data-loaded', 'true');
+        } catch (error) {
+          console.error('Error loading slide:', error);
+          return; // Don't proceed if image fails to load
+        }
+      }
+      
+      currentSlide = prevSlideIndex;
       showSlide(currentSlide);
     }
     
-    function prevSlide() {
-      currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-      showSlide(currentSlide);
+    async function autoAdvance() {
+      if (!slider.classList.contains('sliding')) {
+        await nextSlide();
+      }
     }
     
     function startSlider() {
@@ -299,12 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (slideInterval) clearInterval(slideInterval);
       
       // Start a new interval
-      slideInterval = setInterval(() => {
-        // Only proceed if not currently in a transition
-        if (!slider.classList.contains('sliding')) {
-          nextSlide();
-        }
-      }, 5000); // Change slide every 5 seconds
+      slideInterval = setInterval(autoAdvance, 5000); // Change slide every 5 seconds
     }
     
     function pauseSlider() {
@@ -313,7 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// Initialize popup functionality for all popups (footer buttons and crypto)
+// Initialize popup functionality for all popups
 document.addEventListener('DOMContentLoaded', () => {
   // Get all popup elements
   const popupButtons = document.querySelectorAll('.popup-btn, .crypto-link');
@@ -328,14 +486,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return; // Let the crypto handler take over
       }
       
-      // For popup buttons
       e.preventDefault();
       const popupId = button.getAttribute('data-popup');
       const popup = document.getElementById(`${popupId}-popup`);
       
       if (popup) {
         popup.classList.add('show');
-        document.body.style.overflow = 'hidden'; // Prevent scrolling when popup is open
+        document.body.classList.add('popup-open');
       }
     });
   });
@@ -347,7 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const popup = button.closest('.popup');
       if (popup) {
         popup.classList.remove('show');
-        document.body.style.overflow = '';
+        document.body.classList.remove('popup-open');
       }
     });
   });
@@ -357,7 +514,7 @@ document.addEventListener('DOMContentLoaded', () => {
     popup.addEventListener('click', (e) => {
       if (e.target === popup) {
         popup.classList.remove('show');
-        document.body.style.overflow = '';
+        document.body.classList.remove('popup-open');
       }
     });
   });
@@ -368,19 +525,18 @@ document.addEventListener('DOMContentLoaded', () => {
       popups.forEach(popup => {
         if (popup.classList.contains('show')) {
           popup.classList.remove('show');
-          document.body.style.overflow = '';
+          document.body.classList.remove('popup-open');
         }
       });
     }
   });
 });
 
-// Delegated click handling for footer popup buttons
-// This ensures functionality even if buttons are added later
-
+// Delegated click handling for popup buttons
 document.addEventListener('click', (event) => {
   const target = event.target.closest('.popup-btn');
   if (!target) return; // Click was not on a popup button
+  if (target.classList.contains('crypto-link')) return; // Let crypto handler manage this
 
   event.preventDefault();
   const popupId = target.getAttribute('data-popup');
@@ -389,6 +545,6 @@ document.addEventListener('click', (event) => {
   const popup = document.getElementById(`${popupId}-popup`);
   if (popup) {
     popup.classList.add('show');
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('popup-open');
   }
 });
